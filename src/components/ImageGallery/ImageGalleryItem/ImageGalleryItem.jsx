@@ -3,9 +3,10 @@ import style from './ImageGalleryItem.module.css';
 
 class ImageGalleryItem extends Component {
   render() {
+    const { element } = this.props;
     return (
-      <a href="https://facebook.com">
-        <></>
+      <a className={style.element} href={element.largeImageURL}>
+        <img src={element.webformatURL} alt={element.tags}></img>
       </a>
     );
   }

@@ -12,41 +12,62 @@ class App extends Component {
   state = {
     search: '',
     page: 1,
+    isLoading: false,
     images: [],
-
+    //
     debug: true,
   };
 
   //get data from API
   getData = async (search, page) => {
+    this.setState({ isLoading: true });
     const response = await fetch(
       API_LINK +
         `?key=${API_KEY}&q=${search}&page=${page}&per_page=12&image_type=photo&orientation=horizontal`
     );
     const data = await response.json();
     this.setState({ images: data });
-    console.log(this.state.images);
+    if (this.state.images.length > 0) {
+      this.setState({ isLoading: false });
+      console.log(this.state.isLoading);
+    }
   };
 
   handleSearch = value => {
     this.setState({ search: value.value });
   };
 
-  //do something when component update
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.search !== this.state.search) {
-      console.log('search jest inne od poprzedniego!');
-      this.getData(this.state.search, this.state.page);
+  componentDidMount() {
+    const { search, page } = this.state;
+    this.getData(search, page);
+  }
+
+  componentDidUpdate(prevState, prevProps) {
+    const { search, page } = this.state;
+
+    if (prevState.search !== search) {
+      this.getData(search, page);
     }
   }
 
   render() {
+    const { images } = this.state;
+    //console.log('state: ', images);
     return (
       <div className={style.container}>
         <header className={style.header}>
           <SearchBar onSubmit={this.handleSearch} />
         </header>
-        <main></main>
+        <main>
+          {
+            // checking if images are undefined
+            images === undefined ? (
+              <p>Ładowanie...</p>
+            ) : (
+              <ImageGallery gallery={images} />
+            )
+          }
+        </main>
       </div>
     );
   }

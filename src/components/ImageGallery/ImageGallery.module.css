@@ -1,0 +1,10 @@
+.list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.list li {
+  flex: 1 0 calc(25% - 10px); /* Maksymalnie 4 elementy w jednym rzędzie */
+  margin: 5px; /* Odstęp między elementami */
+  box-sizing: border-box;
+}
