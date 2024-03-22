@@ -7,13 +7,11 @@ class ImageGallery extends Component {
     const { gallery } = this.props;
     return (
       <ul className={style.list}>
-        {gallery.hits.map(element => {
-          return (
-            <li key={element.id}>
-              <ImageGalleryItem element={element} />
-            </li>
-          );
-        })}
+        {gallery.map(element => (
+          <li key={element.id}>
+            <ImageGalleryItem element={element} />
+          </li>
+        ))}
       </ul>
     );
   }
