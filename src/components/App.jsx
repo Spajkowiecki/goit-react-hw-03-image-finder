@@ -13,6 +13,7 @@ const API_KEY = '32705986-6617e254891a5833ed9977223';
 
 class App extends Component {
   state = {
+    firstPageLoad: true,
     //1. first state what i need is checking that data is loading and array for storing data
     search: '',
     images: [],
@@ -55,26 +56,53 @@ class App extends Component {
     }
   };
 
-  componentDidMount() {
-    this.getPhotos();
-  }
-
   handleSearch = value => {
     this.setState({ search: value.value });
   };
 
+  handleNextPage = () => {
+    this.setState(prev => ({
+      activePage: prev.activePage + 1,
+    }));
+  };
+
+  componentDidMount() {
+    this.getPhotos();
+  }
+
+  //Nie wiem czemu to działa a wczesniej wpadało w nieskończoną pętlę
+  componentDidUpdate(prevState, prevProps) {
+    if (
+      prevProps.search !== this.state.search ||
+      prevProps.activePage !== this.state.activePage
+    ) {
+      this.getPhotos();
+    }
+  }
+
+  /// NIE WIEM CZEMU TO NIZEJ DZIAŁA
+  /**
+   * 
+   *  shouldComponentUpdate(nextState, nextProps) {
+    if (this.state.search !== nextState.search) {
+      return true;
+    }
+    return false;
+  }
+  */
   render() {
-    const { images, total, totalHits, isLoading, error } = this.state;
+    const { images, isLoading, error } = this.state;
     return (
       <div className={style.container}>
         <header className={style.header}>
           <SearchBar onSubmit={this.handleSearch} />
         </header>
         <main>
-          {isLoading && <Loader />}
           {error && <p>Something went wrong...</p>}
           <ImageGallery gallery={images} />
+          {isLoading && <Loader />}
         </main>
+        <button onClick={this.handleNextPage}>Next Page</button>
       </div>
     );
   }

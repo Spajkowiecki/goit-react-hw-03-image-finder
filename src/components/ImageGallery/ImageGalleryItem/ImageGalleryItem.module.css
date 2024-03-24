@@ -1,4 +1,10 @@
+.element {
+  position: relative;
+  overflow: hidden;
+}
+
 .element img {
   width: 100%;
+  height: max-content;
   height: 300px;
 }
