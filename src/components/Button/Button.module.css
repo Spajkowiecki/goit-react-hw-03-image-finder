@@ -1,0 +1,18 @@
+.button {
+  width: 200px;
+  height: 40px;
+  background: orange;
+  border: 5px solid rgb(151, 104, 16);
+  color: white;
+  font-weight: 900;
+  letter-spacing: 5px;
+  align-self: center;
+}
+
+.button:hover {
+  border: 5px solid rgb(243, 175, 51);
+}
+
+.button:active {
+  border: 5px solid white;
+}
