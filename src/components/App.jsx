@@ -8,7 +8,7 @@ import axios from 'axios';
 import SearchBar from './SearchBar/SearchBar';
 import Statistics from './Statistics/Statistics';
 
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 const API_KEY = '32705986-6617e254891a5833ed9977223';
@@ -183,23 +183,18 @@ class App extends Component {
   }
 }
 
-// App.propTypes = {
-//   // 1. first state: checking if data is loading and array for storing data
-//   search: PropTypes.string.isRequired,
-//   images: PropTypes.array.isRequired,
-//   isLoading: PropTypes.bool.isRequired,
-
-//   // 2. handling error from response
-//   error: PropTypes.string,
-
-//   // 3. actual page
-//   totalHits: PropTypes.number,
-//   total: PropTypes.number,
-//   activePage: PropTypes.number,
-
-//   // 4. modal
-//   isModalOpen: PropTypes.bool,
-//   selectedImage: PropTypes.object,
-// };
+App.propTypes = {
+  //   // 1. first state: checking if data is loading and array for storing data
+  querry: PropTypes.string.isRequired,
+  isLoading: PropTypes.bool.isRequired, //! waiting for response
+  perPage: PropTypes.number.isRequired, //! limit images per quarry
+  activePage: PropTypes.number.isRequired, //! active page
+  hits: PropTypes.array.isRequired, //! empty array for storing hits
+  error: PropTypes.object,
+  totalHits: PropTypes.number.isRequired, //! total hits
+  total: PropTypes.number.isRequired, //! total images
+  isModalOpen: PropTypes.bool.isRequired,
+  selectedImage: PropTypes.string.isRequired,
+};
 
 export default App;

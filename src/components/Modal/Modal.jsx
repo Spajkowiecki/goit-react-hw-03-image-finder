@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import style from './Modal.module.css';
 
 class Modal extends Component {
@@ -12,5 +13,9 @@ class Modal extends Component {
     );
   }
 }
+
+Modal.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default Modal;

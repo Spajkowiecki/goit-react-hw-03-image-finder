@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import style from './Statistics.module.css';
 
 class Statistics extends Component {
@@ -23,5 +24,10 @@ class Statistics extends Component {
     );
   }
 }
+
+Statistics.propTypes = {
+  loadImages: PropTypes.number,
+  toLoad: PropTypes.number,
+};
 
 export default Statistics;
