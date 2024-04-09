@@ -160,39 +160,18 @@ class App extends Component {
         {this.showLoadMoreButton() && <Button nextPage={this.handleNextPage} />}
       </div>
     );
-
-    //     const { images, selectedImage, isLoading, isModalOpen, error } = this.state;
-    //     return (
-    //       <div className={style.container}>
-    //         {isModalOpen && (
-    //           <Modal closeModal={this.closeModal}>
-    //             <img src={selectedImage.largeImageURL} alt={selectedImage.tags} />
-    //           </Modal>
-    //         )}
-    //         <header className={style.header}>
-    //           <SearchBar onSubmit={this.handleSearch} />
-    //         </header>
-    //         <main>
-    //           {error && <p>Something went wrong...</p>}
-    //           <ImageGallery gallery={images} selectedImage={this.openModal} />
-    //           {isLoading && <Loader />}
-    //         </main>
-    //         {this.showLoadMoreButton() && <Button nextPage={this.handleNextPage} />}
-    //       </div>
-    //     );
   }
 }
 
 App.propTypes = {
-  //   // 1. first state: checking if data is loading and array for storing data
   querry: PropTypes.string.isRequired,
-  isLoading: PropTypes.bool.isRequired, //! waiting for response
-  perPage: PropTypes.number.isRequired, //! limit images per quarry
-  activePage: PropTypes.number.isRequired, //! active page
-  hits: PropTypes.array.isRequired, //! empty array for storing hits
+  isLoading: PropTypes.bool.isRequired,
+  perPage: PropTypes.number.isRequired,
+  activePage: PropTypes.number.isRequired,
+  hits: PropTypes.array.isRequired,
   error: PropTypes.object,
-  totalHits: PropTypes.number.isRequired, //! total hits
-  total: PropTypes.number.isRequired, //! total images
+  totalHits: PropTypes.number.isRequired,
+  total: PropTypes.number.isRequired,
   isModalOpen: PropTypes.bool.isRequired,
   selectedImage: PropTypes.string.isRequired,
 };
