@@ -1,55 +1,62 @@
-.form {
+form {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.input {
-  padding: 10px;
-  width: 300px;
-
-  background-color: #303030;
-  border: 3px solid #3d3d3d;
-
-  color: #a1a1a1;
-  font-size: 18px;
-  border-left: none;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-
+input {
+  font-size: 16px;
+  padding: 5px;
+  padding-left: 30px;
+  color: white;
+  background: #808285;
+  border: 2px solid #6c6e70;
+  border-radius: 15px;
   outline: none;
+  cursor: pointer;
 }
 
-.button {
-  display: flex;
-
-  justify-content: center;
-  align-items: center;
-  width: 48px;
-  height: 48px;
-
-  background-color: orange;
-  border: 3px solid rgb(209, 136, 0);
-
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-
-  overflow: hidden;
+input:hover {
+  border: 2px solid #868889;
 }
 
-.button svg {
+input:focus {
+  color: black;
+  background: #b5b5b8;
+  border: 2px solid #ff8c00;
+}
+input:focus::placeholder {
+  color: transparent;
+}
+
+input::placeholder {
+  color: white;
+  letter-spacing: 3px;
+}
+
+.searchButton {
   position: relative;
-  top: 2px;
-  left: 1px;
+  left: 25px;
+  width: 40px;
+  height: 40px;
+
+  border-radius: 50%;
+  border: none;
+
   fill: white;
+  background: orange;
+  cursor: pointer;
+}
+
+.searchButton:active {
+  background: darkorange;
+}
+
+.searchButton svg {
+  position: relative;
+  top: 0;
+  left: -1px;
   width: 30px;
   height: 30px;
-}
-
-.button:hover {
-  border: 3px solid rgb(255, 209, 124);
-}
-
-.button:active {
-  border: 3px solid white;
+  transform: scale(0.7);
 }

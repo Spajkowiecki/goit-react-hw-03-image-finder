@@ -4,19 +4,18 @@ import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
 import style from './ImageGallery.module.css';
 
 class ImageGallery extends Component {
-  imageSelection = image => {
-    this.props.selectedImage(image);
+  getClickedImage = value => {
+    this.props.selectedImage(value);
   };
-
   render() {
-    const { gallery } = this.props;
+    const { images } = this.props;
     return (
-      <ul className={style.list}>
-        {gallery.map(element => (
+      <ul className={style.gallery}>
+        {images.map(image => (
           <ImageGalleryItem
-            key={element.id}
-            element={element}
-            clickedImage={this.imageSelection}
+            key={image.id}
+            image={image}
+            clickedImage={values => this.getClickedImage(values)}
           />
         ))}
       </ul>
@@ -25,7 +24,9 @@ class ImageGallery extends Component {
 }
 
 ImageGallery.propTypes = {
-  gallery: PropTypes.arrayOf(PropTypes.object).isRequired,
+  images: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default ImageGallery;
+
+//! THIS COMPONENT SHOULD RERENDER WHEN GALLERY CHANGE

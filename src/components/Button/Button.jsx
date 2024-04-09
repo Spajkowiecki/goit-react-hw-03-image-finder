@@ -7,14 +7,10 @@ class Button extends Component {
     const { nextPage } = this.props;
     return (
       <button onClick={nextPage} className={style.button}>
-        LOAD MORE
+        {'+'}
       </button>
     );
   }
 }
-
-Button.propTypes = {
-  nextPage: PropTypes.number,
-};
 
 export default Button;

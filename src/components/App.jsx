@@ -1,80 +1,126 @@
 import { Component } from 'react';
 import style from './App.module.css';
-import SearchBar from './SearchBar/SearchBar';
 import Loader from './Loader/Loader';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Modal from './Modal/Modal';
 import Button from './Button/Button';
 import axios from 'axios';
+import SearchBar from './SearchBar/SearchBar';
+import Statistics from './Statistics/Statistics';
 
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 
-const API_LINK = 'https://pixabay.com/api/';
+axios.defaults.baseURL = 'https://pixabay.com/api/';
 const API_KEY = '32705986-6617e254891a5833ed9977223';
-
+const allStates = {
+  querry: '', //! database querry
+  isLoading: false, //! waiting for response
+  perPage: 12, //! limit images per quarry
+  activePage: 1, //! active page
+  hits: [], //! empty array for storing hits
+  error: null,
+  totalHits: 0, //! total hits
+  total: 0, //! total images
+  isModalOpen: false,
+  selectedImage: '',
+};
 //example link https://pixabay.com/api/?q=cat&page=1&key=your_key&image_type=photo&orientation=horizontal&per_page=12
 
 class App extends Component {
+  //! refactorisation of application
+  //? setting the default props from preventing errors before they are loaded in
   static defaultProps = {
-    // Ustaw domyślne wartości dla zmiennych, które mogą być niezdefiniowane
-    search: '',
-    isLoading: false,
-    totalHits: 0,
-    total: 0,
-    images: [],
+    ...allStates,
   };
+
+  // search - field to write new Querries for searching images, need to update galleryImage after sending request
 
   state = {
-    //1. first state what i need is checking that data is loading and array for storing data
-    firstPageLoad: true,
-    search: '',
-    images: [],
-    isLoading: false,
-    //2. next what will be need, is to handle an error from response
-    error: null,
-    //3. actual page
-    totalHits: 0,
-    total: 0,
-    activePage: 1,
-    //4. modal
-    isModalOpen: false,
-    selectedImage: null,
+    ...allStates,
   };
 
-  /*
-   1. 'pobieram dane z API' w czasie ładowania obrazów wyświetlam:
-       - <Loader> (aby to zrobić zmieniam stan isLoading, na początku i na końcu funkcji)
-   */
-
-  getPhotos = async () => {
-    const { search, activePage } = this.state;
+  //! sending request to API
+  apiCall = async () => {
+    const { querry, activePage, perPage } = this.state;
     this.setState({ isLoading: true });
     try {
-      const { data } = await axios(
-        API_LINK +
-          `?key=${API_KEY}&q=${search}&page=${activePage}&per_page=12&image_type=photo&orientation=horizontal`
+      const { data } = await axios.get(
+        `?key=${API_KEY}&q=${querry}&page=${activePage}&per_page=${perPage}&image_type=photo&orientation=horizontal&`
       );
-      // console.log('DATA FROM API: ', data);
+      //? setting states after getting querry response
 
       this.setState({
-        images: [...this.state.images, ...data.hits],
+        hits: [...this.state.hits, ...data.hits],
         total: data.total,
         totalHits: data.totalHits,
       });
+
+      console.log('1: APICALL[DATA]:', data);
     } catch (error) {
-      this.setState({ error });
-      // console.log('ERROR: ', error);
+      console.log('APICALL[ERROR]: ', error.message);
+      this.setState({ error: error.message });
     } finally {
-      // console.log('Finished Loading Data!');
-      this.setState({
-        isLoading: false,
-      });
+      this.setState({ isLoading: false });
     }
   };
 
+  componentDidUpdate(prevProps, prevState) {
+    console.log('[CDU]------->');
+    if (prevState.querry !== this.state.querry) {
+      this.setState({
+        hits: [],
+      });
+      this.apiCall();
+    }
+    if (prevState.activePage !== this.state.activePage) {
+      this.apiCall();
+    }
+  }
+
+  updateSearchValue = value => {
+    this.setState({ querry: value });
+  };
+
+  keyPressEvent = event => {
+    if (event.key === 'Escape') {
+      this.closeModal();
+    }
+  };
+
+  clickEvent = event => {
+    if (event.target.nodeName !== 'IMG') {
+      this.closeModal();
+    }
+  };
+
+  openModal = () => {
+    this.setState({
+      isModalOpen: true,
+    });
+    window.addEventListener('keydown', this.keyPressEvent);
+    window.addEventListener('click', this.clickEvent);
+    document.body.style.overflowY = 'hidden';
+  };
+
+  closeModal = () => {
+    this.setState({ isModalOpen: false });
+    document.body.style.overflowY = 'auto';
+    window.removeEventListener('keypress', this.keyPressEvent);
+    window.removeEventListener('click', this.clickEvent);
+  };
+
+  handleSelectImage = value => {
+    this.setState({
+      selectedImage: value,
+    });
+
+    this.openModal();
+  };
+
+  //!Hide / Show for loading more photos
   showLoadMoreButton = () => {
-    const { total, images, activePage } = this.state;
-    if (images.length > 0 && total - activePage * 12 > 0) {
+    const { total, hits, activePage } = this.state;
+    if (hits.length > 0 && total - activePage * 12 > 0) {
       return true;
     }
     if (total - activePage * 12 < 0) {
@@ -82,95 +128,78 @@ class App extends Component {
     }
   };
 
-  handleSearch = value => {
-    this.setState({ search: value.value });
-  };
-
+  //! Next page function, changing state of activePage
   handleNextPage = () => {
     this.setState(prev => ({
       activePage: prev.activePage + 1,
     }));
   };
 
-  componentDidMount() {
-    this.getPhotos();
-  }
-
-  //Nie wiem czemu to działa a wczesniej wpadało w nieskończoną pętlę
-  componentDidUpdate(prevState, prevProps) {
-    if (prevProps.activePage !== this.state.activePage) {
-      this.getPhotos();
-    }
-    if (prevProps.search !== this.state.search) {
-      this.setState({ images: [] });
-      this.getPhotos();
-    }
-  }
-
-  handleKeyDown = event => {
-    if (event.key === 'Escape') {
-      this.closeModal();
-    }
-  };
-
-  handleClickEvent = event => {
-    if (event.target.tagName !== 'IMG') {
-      this.closeModal();
-    }
-  };
-
-  openModal = image => {
-    this.setState({ selectedImage: image, isModalOpen: true });
-    document.addEventListener('keydown', this.handleKeyDown);
-    document.addEventListener('click', this.handleClickEvent);
-  };
-
-  closeModal = () => {
-    this.setState({ isModalOpen: false });
-    document.removeEventListener('keydown', this.handleKeyDown);
-    document.removeEventListener('click', this.handleClickEvent);
-  };
-
   render() {
-    const { images, selectedImage, isLoading, isModalOpen, error } = this.state;
+    const { hits, total, isLoading, selectedImage, isModalOpen, error } =
+      this.state;
     return (
       <div className={style.container}>
         {isModalOpen && (
-          <Modal closeModal={this.closeModal}>
+          <Modal>
             <img src={selectedImage.largeImageURL} alt={selectedImage.tags} />
           </Modal>
         )}
-        <header className={style.header}>
-          <SearchBar onSubmit={this.handleSearch} />
+        <header>
+          <SearchBar value={this.updateSearchValue} />
         </header>
         <main>
-          {error && <p>Something went wrong...</p>}
-          <ImageGallery gallery={images} selectedImage={this.openModal} />
+          <Statistics
+            toLoad={total}
+            loadedImages={this.state.activePage * this.state.perPage}
+          />
           {isLoading && <Loader />}
+          {error && <p>Something went wrong...</p>}
+          <ImageGallery selectedImage={this.handleSelectImage} images={hits} />
         </main>
         {this.showLoadMoreButton() && <Button nextPage={this.handleNextPage} />}
       </div>
     );
+
+    //     const { images, selectedImage, isLoading, isModalOpen, error } = this.state;
+    //     return (
+    //       <div className={style.container}>
+    //         {isModalOpen && (
+    //           <Modal closeModal={this.closeModal}>
+    //             <img src={selectedImage.largeImageURL} alt={selectedImage.tags} />
+    //           </Modal>
+    //         )}
+    //         <header className={style.header}>
+    //           <SearchBar onSubmit={this.handleSearch} />
+    //         </header>
+    //         <main>
+    //           {error && <p>Something went wrong...</p>}
+    //           <ImageGallery gallery={images} selectedImage={this.openModal} />
+    //           {isLoading && <Loader />}
+    //         </main>
+    //         {this.showLoadMoreButton() && <Button nextPage={this.handleNextPage} />}
+    //       </div>
+    //     );
   }
 }
 
-App.propTypes = {
-  // 1. first state: checking if data is loading and array for storing data
-  search: PropTypes.string.isRequired,
-  images: PropTypes.array.isRequired,
-  isLoading: PropTypes.bool.isRequired,
+// App.propTypes = {
+//   // 1. first state: checking if data is loading and array for storing data
+//   search: PropTypes.string.isRequired,
+//   images: PropTypes.array.isRequired,
+//   isLoading: PropTypes.bool.isRequired,
 
-  // 2. handling error from response
-  error: PropTypes.string,
+//   // 2. handling error from response
+//   error: PropTypes.string,
 
-  // 3. actual page
-  totalHits: PropTypes.number,
-  total: PropTypes.number,
-  activePage: PropTypes.number,
+//   // 3. actual page
+//   totalHits: PropTypes.number,
+//   total: PropTypes.number,
+//   activePage: PropTypes.number,
 
-  // 4. modal
-  isModalOpen: PropTypes.bool,
-  selectedImage: PropTypes.object,
-};
+//   // 4. modal
+//   isModalOpen: PropTypes.bool,
+//   selectedImage: PropTypes.object,
+// };
 
 export default App;

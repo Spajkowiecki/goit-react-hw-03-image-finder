@@ -1,48 +1,9 @@
-.list {
+/*! setting the main container for photos */
+.gallery {
   display: flex;
+  padding: 10px;
   flex-wrap: wrap;
-}
-
-.list li {
-  position: relative;
-  overflow: hidden;
-  /* Maksymalnie 4 elementy w jednym rzędzie */
-  flex: 1 0 calc(25% - 10px);
-  margin: 5px; /* Odstęp między elementami */
-  box-sizing: border-box;
-  height: 280px;
-}
-
-.stats {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  text-align: center;
-  transform: translateY(100%);
-  transition: transform 0.3s ease;
-}
-
-li:hover .stats {
-  transform: translateY(0);
-}
-
-.stats span {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 20px;
-  padding: 5px;
-
-  background: orange;
-  color: white;
-  border: 2px solid rgb(201, 133, 8);
-}
-
-.stats svg {
-  fill: white;
-  width: 32px;
-  height: 32px;
+  justify-content: center;
+  height: max-content;
+  gap: 10px;
 }

@@ -1,4 +1,25 @@
+/** HEADER  **/
+header {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0px;
+  text-align: center;
+  border-bottom: 2px solid orange;
+  background: #3a3b3c;
+}
+
+main {
+  display: flex;
+  flex: 1;
+}
+
 .container {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+}
+
+/* .container {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -6,6 +27,7 @@
   color: white;
   background-color: #181818;
 }
+
 main {
   display: flex;
   justify-content: center;
@@ -24,4 +46,4 @@ main {
   row-gap: 20px;
 
   background: rgb(36, 36, 36);
-}
+} */
