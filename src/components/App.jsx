@@ -23,6 +23,7 @@ const allStates = {
   total: 0, //! total images
   isModalOpen: false,
   selectedImage: '',
+  showButton: false,
 };
 //example link https://pixabay.com/api/?q=cat&page=1&key=your_key&image_type=photo&orientation=horizontal&per_page=12
 
@@ -42,23 +43,22 @@ class App extends Component {
   //! sending request to API
   apiCall = async () => {
     const { querry, activePage, perPage } = this.state;
-    this.setState({ isLoading: true });
+    this.setState({ isLoading: true, showButton: false });
     try {
       const { data } = await axios.get(
-        `?key=${API_KEY}&q=${querry}&image_type=photo&orientation=horizontal&page=${activePage}&per_page=${perPage}`
+        `?key=${API_KEY}&q=${querry}&page=${activePage}&per_page=${perPage}&image_type=photo&orientation=horizontal`
       );
 
+      // const newHits = data.hits.filter(
+      //   newImage =>
+      //     !this.state.hits.some(
+      //       existingImage => existingImage.id === newImage.id
+      //     )
+      // );
       //? setting states after getting querry response
 
-      const newHits = data.hits.filter(
-        newImage =>
-          !this.state.hits.some(
-            existingImage => existingImage.id === newImage.id
-          )
-      );
-
       this.setState({
-        hits: [...this.state.hits, ...newHits],
+        hits: [...this.state.hits, ...data.hits],
         total: data.total,
         totalHits: data.totalHits,
       });
@@ -74,15 +74,14 @@ class App extends Component {
       console.log('APICALL[ERROR]: ', error.message);
       this.setState({ error: error.message });
     } finally {
-      this.setState({ isLoading: false });
+      this.setState({ isLoading: false, showButton: true });
     }
   };
-
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(_, prevState) {
     console.log('[CDU]------->');
     if (
-      prevState.querry !== this.state.querry ||
-      prevState.activePage !== this.state.activePage
+      prevState.activePage !== this.state.activePage ||
+      this.state.querry !== prevState.querry
     ) {
       this.apiCall();
     }
@@ -132,10 +131,10 @@ class App extends Component {
   showLoadMoreButton = () => {
     const { total, hits, activePage } = this.state;
     if (hits.length > 0 && total - activePage * 12 > 0) {
-      return true;
+      return false;
     }
     if (total - activePage * 12 < 0) {
-      return false;
+      return true;
     }
   };
 
@@ -147,8 +146,15 @@ class App extends Component {
   };
 
   render() {
-    const { hits, total, isLoading, selectedImage, isModalOpen, error } =
-      this.state;
+    const {
+      hits,
+      total,
+      isLoading,
+      selectedImage,
+      isModalOpen,
+      error,
+      showButton,
+    } = this.state;
     return (
       <div className={style.container}>
         {isModalOpen && (
@@ -171,7 +177,7 @@ class App extends Component {
             images={[...hits]}
           />
         </main>
-        {this.showLoadMoreButton() && <Button nextPage={this.handleNextPage} />}
+        {showButton === true ? <Button nextPage={this.handleNextPage} /> : null}
       </div>
     );
   }
