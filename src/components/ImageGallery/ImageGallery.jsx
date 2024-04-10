@@ -11,13 +11,15 @@ class ImageGallery extends Component {
     const { images } = this.props;
     return (
       <ul className={style.gallery}>
-        {images.map(image => (
-          <ImageGalleryItem
-            key={image.id}
-            image={image}
-            clickedImage={values => this.getClickedImage(values)}
-          />
-        ))}
+        {images.map(image => {
+          return (
+            <ImageGalleryItem
+              key={image.id}
+              image={image}
+              clickedImage={values => this.getClickedImage(values)}
+            />
+          );
+        })}
       </ul>
     );
   }

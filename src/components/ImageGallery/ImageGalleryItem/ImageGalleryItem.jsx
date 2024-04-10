@@ -13,10 +13,12 @@ class ImageGalleryItem extends Component {
       <li
         className={style.galleryItem}
         onClick={event => this.handleImageClick(image)}
+        id={image.id}
       >
         <div className={style.photo}>
           <img src={image.webformatURL} alt={image.tags}></img>
         </div>
+        <p>{image.id}</p>
         <div className={style.stats}>
           <span>
             <svg>

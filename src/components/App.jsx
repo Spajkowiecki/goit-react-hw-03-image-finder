@@ -45,17 +45,31 @@ class App extends Component {
     this.setState({ isLoading: true });
     try {
       const { data } = await axios.get(
-        `?key=${API_KEY}&q=${querry}&page=${activePage}&per_page=${perPage}&image_type=photo&orientation=horizontal&`
+        `?key=${API_KEY}&q=${querry}&image_type=photo&orientation=horizontal&page=${activePage}&per_page=${perPage}`
       );
+
       //? setting states after getting querry response
 
+      const newHits = data.hits.filter(
+        newImage =>
+          !this.state.hits.some(
+            existingImage => existingImage.id === newImage.id
+          )
+      );
+
       this.setState({
-        hits: [...this.state.hits, ...data.hits],
+        hits: [...this.state.hits, ...newHits],
         total: data.total,
         totalHits: data.totalHits,
       });
 
-      console.log('1: APICALL[DATA]:', data);
+      // this.setState({
+      //   hits: data.hits,
+      //   total: data.total,
+      //   totalHits: data.totalHits,
+      // });
+
+      console.log('1: APICALL[DATA]:', data.hits);
     } catch (error) {
       console.log('APICALL[ERROR]: ', error.message);
       this.setState({ error: error.message });
@@ -66,19 +80,16 @@ class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     console.log('[CDU]------->');
-    if (prevState.querry !== this.state.querry) {
-      this.setState({
-        hits: [],
-      });
-      this.apiCall();
-    }
-    if (prevState.activePage !== this.state.activePage) {
+    if (
+      prevState.querry !== this.state.querry ||
+      prevState.activePage !== this.state.activePage
+    ) {
       this.apiCall();
     }
   }
 
   updateSearchValue = value => {
-    this.setState({ querry: value });
+    this.setState({ querry: value.trim(), hits: [], activePage: 1 });
   };
 
   keyPressEvent = event => {
@@ -155,7 +166,10 @@ class App extends Component {
           />
           {isLoading && <Loader />}
           {error && <p>Something went wrong...</p>}
-          <ImageGallery selectedImage={this.handleSelectImage} images={hits} />
+          <ImageGallery
+            selectedImage={this.handleSelectImage}
+            images={[...hits]}
+          />
         </main>
         {this.showLoadMoreButton() && <Button nextPage={this.handleNextPage} />}
       </div>
